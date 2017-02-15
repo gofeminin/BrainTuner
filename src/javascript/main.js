@@ -1,4 +1,9 @@
 
+/**
+ * getScriptSelf - Get the current script tag
+ *
+ * @return {HTMLScriptElement}  The current script tag 
+ */
 function getScriptSelf() {
 	var scripts = document.getElementsByTagName('script'),
 			len = scripts.length;
@@ -7,6 +12,11 @@ function getScriptSelf() {
 
 
 
+/**
+ * getScriptSelfUrlParamsMap - Returns key-value pairs of all Get-Parameters of the script's url
+ *
+ * @return {Map}  A Map of the Get-Parameters
+ */
 function getScriptSelfUrlParamsMap() {
 	var script_self = getScriptSelf(),
 			url_params_map = new UrlParamsMap(script_self.src);
