@@ -1,11 +1,19 @@
 
 var container = null;
 
+var level_key = 1;
+
+var level = null;
+
+var current = 0;
+
+var math_map  = null;
+
 var levels = new Map([
 	['1', new Map([['amount', 20],['range_min', 1], ['range_max', 10]])],
 	['2', new Map([['amount', 50],['range_min', 1], ['range_max', 15]])],
 	['3', new Map([['amount', 100],['range_min', 1], ['range_max', 20]])],
-	['3', new Map([['amount', 150],['range_min', 1], ['range_max', 30]])]
+	['expertmode', new Map([['amount', 150],['range_min', 1], ['range_max', 30]])]
 ]);
 
 var keys = new Map([
@@ -105,6 +113,145 @@ function onDomReady(callback) {
 
 
 
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * max) + min;
+}
+
+
+
+function getRandomCalcu() {
+	var rand = getRandomInt(0, 1),
+			calcu = '+';
+	switch (rand) {
+		case 0:
+			calcu = '+';
+			break;
+		case 1:
+			calcu = '-';
+			break;
+		case 2:
+			calcu = '*';
+			break;
+		case 3:
+			calcu = '/';
+			break;
+		default:
+			break;
+	}
+	return ' ' + calcu + ' ';
+}
+
+function getCalcResultFromString(str) {
+	return new Function('return ' + str)(); // jshint ignore:line
+}
+
+function getMathematicaMap() {
+	var mathematica_map = new Map(),
+			amount = level.get('amount'),
+			range_min = level.get('range_min'),
+			range_max = level.get('range_max'),
+			cb = null,
+			i = 0;
+	cb = function(i) {
+		var calcu = getRandomCalcu(),
+		 		num1 = getRandomInt(range_min, range_max),
+				num2 = getRandomInt(range_min, range_max),
+				result_offset = getRandomInt(0, 2),
+				calc = num1 + calcu + num2,
+				true_result = getCalcResultFromString(calc),
+				offered_result = getCalcResultFromString(calc+calcu+result_offset),
+				offered_result_is_true = true;
+		if (true_result !== offered_result) {
+			offered_result_is_true = false;
+		}
+		mathematica_map.set(i, new Map([
+			['calc', calc],
+			['result', offered_result],
+			['answer', offered_result_is_true]
+		]));
+	};
+	for (; i < amount; i++) {
+	  cb(i);
+	}
+	return mathematica_map;
+}
+
+
+
+function create(name, contents, attrs) {
+	var el = document.createElement(name);
+	if (contents) {
+		var contents_type = typeof contents;
+		if (contents_type === 'string' || contents_type === 'number') {
+			el.innerHTML = contents;
+		} else if (contents_type === 'object') {
+			if (contents.length) { // array of html elements
+				var nodeCallback = function(n) {
+					el.appendChild(n);
+				};
+				contents.forEach(nodeCallback);
+			} else { // single html element
+				el.appendChild(contents);
+			}
+		}
+	}
+	if (attrs && attrs.length) {
+		var attrCallback = function(attr) {
+			el.setAttribute(attr[0], attr[1]);
+		};
+		attrs.forEach(attrCallback);
+	}
+	return el;
+}
+
+
+
+function getRows() {
+	var values = [],
+			i = -1,
+			len = 2;
+	for(; i < len; i++) {
+		if (current === 0 && i === -1)  {
+			values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
+		} else {
+			values.push([math_map.get(i).get('calc'), '=', math_map.get(i).get('result')]);
+		}
+	}
+	var rows = [
+		create('tr', [
+			create('td', values[0][0]),
+			create('td', values[0][1]),
+			create('td', values[0][2])
+		]),
+		create('tr', [
+			create('td', values[1][0]),
+			create('td', values[1][1]),
+			create('td', values[1][2])
+		]),
+		create('tr', [
+			create('td', values[2][0]),
+			create('td', values[2][1]),
+			create('td', values[2][2])
+		])
+	];
+	return rows;
+}
+
+
+
+function update() {
+	var tbody = getEl('[data-game] tbody');
+	// reset
+	tbody.innerHTML = '';
+	var rows = getRows();
+	var rowCallback = function(row) {
+		tbody.appendChild(row);
+	};
+	rows.forEach(rowCallback);
+}
+
+
+
 function finishGame() {
 	getEl('[data-game]').style.display = 'none';
 	getEl('[data-finish]').style.display = 'block';
@@ -112,14 +259,16 @@ function finishGame() {
 
 
 
-function startGame(level_key) {
+function startGame() {
 	getEl('[data-footer] [data-new]').style.display = 'block';
 	getEl('[data-game]').style.display = 'block';
 	getEl('[data-level]').style.display = 'none';
 	getEl('[data-footer] [data-level]').style.display = 'none';
-	var amount = levels.get(level_key);
-	console.log(amount);
-
+	math_map = getMathematicaMap();
+	// math_map.forEach(function(math){
+	// 	console.log(math.get('calc'), math.get('result'), math.get('answer'));
+	// });
+	update();
 }
 
 
@@ -144,7 +293,9 @@ function registerEventHandlersLevel() {
 	cb = function(btn) {
 		btn.onclick = function(evt){
 			evt.preventDefault();
-			startGame(this.name);
+			level_key = this.name;
+			level = levels.get(level_key);
+			startGame();
 		};
 	};
 	buttons.forEach(cb);
