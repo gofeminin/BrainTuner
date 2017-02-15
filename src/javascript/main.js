@@ -265,9 +265,6 @@ function startGame() {
 	getEl('[data-level]').style.display = 'none';
 	getEl('[data-footer] [data-level]').style.display = 'none';
 	math_map = getMathematicaMap();
-	// math_map.forEach(function(math){
-	// 	console.log(math.get('calc'), math.get('result'), math.get('answer'));
-	// });
 	update();
 }
 
@@ -303,14 +300,43 @@ function registerEventHandlersLevel() {
 
 
 
+function isUserInputTrue(b) {
+	if (b === 'true' || b === 'false') {
+		if (b === 'true' && math_map.get(current).get('answer') === true) {
+			return true;
+		} else if (b === 'false' && math_map.get(current).get('answer') === false) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		throw new Error('Only String("true") and String("false") allowed..');
+	}
+}
+
+
+
 function registerEventHandlersGame() {
 	var buttonCallback = function(btn) {
 		btn.onclick = function(evt) {
 			evt.preventDefault();
-			finishGame();
+			var btn_name = this.name;
+			var user_input = isUserInputTrue(btn_name);
+			if (user_input === true) {
+				alert('Correct :)');
+			} else if (user_input === false) {
+				alert('Incorrect :\'(');
+			}
 		};
 	};
 	getEl('[data-game] button', true).forEach(buttonCallback);
+	window.addEventListener('keydown', function(evt){
+		if (evt.key === keys.get('true')) {
+			getEl('[data-game] button[name="true"]').click();
+		} else if (evt.key === keys.get('false')) {
+			getEl('[data-game] button[name="false"]').click();
+		}
+	});
 }
 
 
