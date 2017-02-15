@@ -1,0 +1,75 @@
+<div data-gehirntrainer>
+	<div data-main>
+		<div data-intro style="display: none;">
+			<p>Trainieren Sie ihr logisches Denkvermögen und Ihre Rechenfähigkeit!</p>
+			<p>Der Gehirntrainer zeigt Ihnen verschiedene Rechenaufgaben. Ziel des Spiels ist es, so schnell wie möglich zu entscheiden, ob diese richtig oder falsch gelöst sind.</p>
+			<p>Klicken Sie dazu auf den entsprechenden Button oder die Tasten “F” (falsch) oder “J” (richtig).</p>
+			<p>Für jede falsche Antwort erhalten Sie fünf Straftsekunden. Das Spiel ist beendet, sobald Sie alle Rechenaufgaben bewertet haben.</p>
+			<p class="blue"><strong>Viel Erfolg!</strong></p>
+		</div>
+		<div data-level style="display: none;">
+			<p>Wählen Sie den Schwierigkeitsgrad!</p>
+			<p>Sie können den Gehirntrainer in 3 Schwierigkeitsgraden spielen:</p>
+			<ul>
+				<li><span class="blue">Leicht:</span> 20 Aufgaben</li>
+				<li><span class="blue">Mittel:</span> 50 Aufgaben</li>
+				<li><span class="blue">Schwer:</span> 100 Aufgaben</li>
+			</ul>
+		</div>
+		<div data-game style="display: block;">
+			<div class="top">
+				<p>Zeit: <span data-time>0:00:000</span></p>
+				<p class="blue">Strafsekunden: <span data-penalties>0:00:000</span></p>
+			</div>
+			<table>
+				<tr class="false">
+					<td>4 x 8</td>
+					<td>=</td>
+					<td>31</td>
+				</tr>
+				<tr>
+					<td>3 - 9</td>
+					<td>=</td>
+					<td>-6</td>
+				</tr>
+				<tr>
+					<td>9 + 5</td>
+					<td>=</td>
+					<td>14</td>
+				</tr>
+			</table>
+			<div class="buttons">
+				<button name="false">Falsch (F)</button>
+				<button name="true">Richtig (J)</button>
+			</div>
+		</div>
+		<div data-finish style="display: none;">
+			<p>Sie haben alle Aufgaben gelöst!</p>
+			<p>Ihr Ergebnis:</p>
+			<div data-time class="blue">0:00:000</div>
+			<p>Neues Spiel beginnen:</p>
+		</div>
+		<div data-experts style="display: none;">
+			<p>Ihr Ergebnis:</p>
+			<p data-time class="blue">0:00:000</p>
+			<p>Sie haben alle Aufgaben der höchsten Schwierigkeitsstufe in Rekordzeit gelöst.<br/>Damit haben Sie den <strong>Experten-Modus</strong> freigeschaltet!</p>
+			<p>Lösen Sie jetzt 150 Aufgaben mit Zahlen zwischen 1 - 30:</p>
+			<button name="expertmode">Expertenmodus</button>
+			<p>Oder spielen Sie erneut in einem anderen Schwierigkeitsgrad:</p>
+		</div>
+	</div>
+	<div data-footer>
+		<div data-new style="display: block;">
+			<div>
+				<button name="start">Neues Spiel</button>
+			</div>
+		</div>
+		<div data-level style="display: none;">
+			<div>
+				<button name="1">Leicht</button>
+				<button name="2">Mittel</button>
+				<button name="3">Schwer</button>
+			</div>
+		</div>
+	</div>
+</div>
