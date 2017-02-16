@@ -9,6 +9,16 @@ var current = 0;
 
 var math_map  = null;
 
+var penalty_value = 5;
+
+var penalty_el = null;
+
+var time_el = null;
+
+var timer_interval = null;
+
+var time_delimiter = ':';
+
 var levels = new Map([
 	['1', new Map([['amount', 20],['range_min', 1], ['range_max', 10]])],
 	['2', new Map([['amount', 50],['range_min', 1], ['range_max', 15]])],
@@ -142,7 +152,7 @@ function getRandomCalcu() {
 }
 
 function getCalcResultFromString(str) {
-	return new Function('return ' + str)(); // jshint ignore:line
+	return new Function('return ' + str)();
 }
 
 function getMathematicaMap() {
@@ -206,15 +216,27 @@ function create(name, contents, attrs) {
 
 
 
-function getRows() {
+function getRowsMap() {
 	var values = [],
-			i = -1,
-			len = 2;
+			i = current-1,
+			len = current+2,
+			empty_rows = 0,
+			continue_calc = true;
 	for(; i < len; i++) {
 		if (current === 0 && i === -1)  {
 			values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
+			empty_rows = empty_rows + 1;
 		} else {
-			values.push([math_map.get(i).get('calc'), '=', math_map.get(i).get('result')]);
+			var curr_map = math_map.get(i);
+			if (curr_map === undefined) {
+				values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
+				empty_rows = empty_rows + 1;
+			} else {
+				values.push([curr_map.get('calc'), '=', curr_map.get('result')]);
+			}
+			if (empty_rows === 2) {
+				continue_calc = false;
+			}
 		}
 	}
 	var rows = [
@@ -234,27 +256,115 @@ function getRows() {
 			create('td', values[2][2])
 		])
 	];
-	return rows;
+	return new Map([
+		['rows', rows],
+		['continue_calc', continue_calc]
+	]);
 }
 
 
 
-function update() {
+function incrementPenalty() {
+	penalty_el.innerHTML = parseInt(penalty_el.innerHTML, 10) + penalty_value;
+};
+
+
+
+function getTimeMultiMod(number) {
+	var mult = 0,
+			mod = 0;
+	mult = Math.floor(number / 60);
+	mod = (number % 60);
+	return {multiplier: mult, modulo: mod};
+};
+
+
+
+function getFormattedTimeString(time_str, seconds) {
+	var split = time_str.split(time_delimiter),
+			hh = parseInt(split[0], 10),
+			mm = parseInt(split[1], 10),
+			ss = parseInt(split[2], 10),
+			offset = null;
+	seconds = parseInt(seconds, 10);
+	ss = ss + seconds;
+	if (ss > 60) {
+		offset = getTimeMultiMod(ss);
+		ss = offset.modulo;
+		mm = mm + offset.multiplier;
+	}
+	if (mm > 60) {
+		offset = getTimeMultiMod(mm);
+		mm = offset.modulo;
+		hh = hh + offset.multiplier;
+	}
+	hh = hh.toString();
+	mm = mm.toString();
+	ss = ss.toString();
+	if (hh.length === 1) hh = '0' + hh;
+	if (mm.length === 1) mm = '0' + mm;
+	if (ss.length === 1) ss = '0' + ss;
+	return hh + time_delimiter + mm + time_delimiter + ss;
+}
+
+
+
+function startTimer() {
+	time_el.innerHTML = '00:00:00'; // reset timer
+	penalty_el.innerHTML = '0'; // reset penalty
+	function timerIntervalCallback() {
+		time_el.innerHTML = getFormattedTimeString(time_el.innerHTML, 1);
+	}
+	timer_interval = window.setInterval(timerIntervalCallback, 1000);
+};
+
+
+
+function stopTimer() {
+	window.clearInterval(timer_interval);
+	timer_interval = null;
+}
+
+
+
+function update(answer) {
+	answer = (typeof answer === 'undefined') ? null : answer;
+	if (answer !== null) { // next calc
+		current = current + 1;
+	}
+	if (answer === false) {
+		incrementPenalty();
+	}
 	var tbody = getEl('[data-game] tbody');
+	var rows_map = getRowsMap();
+	var rows = null;
 	// reset
 	tbody.innerHTML = '';
-	var rows = getRows();
-	var rowCallback = function(row) {
-		tbody.appendChild(row);
-	};
-	rows.forEach(rowCallback);
+	if (rows_map.get('continue_calc') === true) {
+		rows = rows_map.get('rows');
+		var rowCallback = function(row) {
+			tbody.appendChild(row);
+		};
+		rows.forEach(rowCallback);
+		if (answer !== null ) {
+			getEl('[data-game] tr').setAttribute('class', answer.toString());
+		}
+	} else {
+		finishGame();
+	}
 }
 
 
 
 function finishGame() {
+	stopTimer();
+	current = 0; // reset current, so the user can start a new game :)
 	getEl('[data-game]').style.display = 'none';
 	getEl('[data-finish]').style.display = 'block';
+	getEl('[data-finish] [data-time]').innerHTML = getFormattedTimeString(
+		time_el.innerHTML,
+		penalty_el.innerHTML
+	);
 }
 
 
@@ -265,8 +375,10 @@ function startGame() {
 	getEl('[data-level]').style.display = 'none';
 	getEl('[data-footer] [data-level]').style.display = 'none';
 	math_map = getMathematicaMap();
+	startTimer();
 	update();
 }
+
 
 
 function registerEventHandlersIntro() {
@@ -320,17 +432,14 @@ function registerEventHandlersGame() {
 	var buttonCallback = function(btn) {
 		btn.onclick = function(evt) {
 			evt.preventDefault();
+			if (getEl('[data-game]').style.display !== 'block') return; // safe exit
 			var btn_name = this.name;
 			var user_input = isUserInputTrue(btn_name);
-			if (user_input === true) {
-				alert('Correct :)');
-			} else if (user_input === false) {
-				alert('Incorrect :\'(');
-			}
+			update(user_input);
 		};
 	};
 	getEl('[data-game] button', true).forEach(buttonCallback);
-	window.addEventListener('keydown', function(evt){
+	window.addEventListener('keydown', function(evt) {
 		if (evt.key === keys.get('true')) {
 			getEl('[data-game] button[name="true"]').click();
 		} else if (evt.key === keys.get('false')) {
@@ -374,6 +483,8 @@ function init() {
 	if (container) {
 		loadCss('style.css');
 		container.innerHTML = html_template;
+		penalty_el = getEl('[data-game] [data-penalties]');
+		time_el = getEl('[data-game] [data-time]');
 		registerEventHandlers('intro,level,game');
 	}
 }
