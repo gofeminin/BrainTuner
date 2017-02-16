@@ -19,23 +19,29 @@ var timer_interval = null;
 
 var time_delimiter = ':';
 
+var expert_mode_max_seconds = 180;
+
 var levels = {
 	'1': {
+		'name': 'easy',
 		'amount': 20,
 		'range_min': 1,
 		'range_max': 10
 	},
 	'2': {
+		'name': 'medium',
 		'amount': 50,
 		'range_min': 1,
 		'range_max': 15
 	},
 	'3': {
+		'name': 'hard',
 		'amount': 100,
 		'range_min': 1,
 		'range_max': 20
 	},
 	'expertmode': {
+		'name': 'expert',
 		'amount': 150,
 		'range_min': 1,
 		'range_max': 30
@@ -163,7 +169,7 @@ function getRandomInt(min, max) {
 
 
 function getRandomCalcu() {
-	var rand = getRandomInt(0, 1),
+	var rand = getRandomInt(0, 3),
 			calcu = '+';
 	switch (rand) {
 		case 0:
@@ -185,7 +191,7 @@ function getRandomCalcu() {
 }
 
 function getCalcResultFromString(str) {
-	return new Function('return ' + str)();
+	return eval(str);
 }
 
 function getMathematicaMap() {
@@ -202,7 +208,7 @@ function getMathematicaMap() {
 				result_offset = getRandomInt(0, 2),
 				calc = num1 + calcu + num2,
 				true_result = getCalcResultFromString(calc),
-				offered_result = getCalcResultFromString(calc+calcu+result_offset),
+				offered_result = true_result+result_offset,
 				offered_result_is_true = true;
 		if (true_result !== offered_result) {
 			offered_result_is_true = false;
@@ -265,7 +271,7 @@ function getRowsMap() {
 				values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
 				empty_rows = empty_rows + 1;
 			} else {
-				values.push([curr_map['calc'], '=', curr_map['result']]);
+				values.push([curr_map['calc'], '=', curr_map['result'].toString()]);
 			}
 			if (empty_rows === 2) {
 				continue_calc = false;
@@ -321,12 +327,12 @@ function getFormattedTimeString(time_str, seconds) {
 			offset = null;
 	seconds = parseInt(seconds, 10);
 	ss = ss + seconds;
-	if (ss > 60) {
+	if (ss >= 60) {
 		offset = getTimeMultiMod(ss);
 		ss = offset.modulo;
 		mm = mm + offset.multiplier;
 	}
-	if (mm > 60) {
+	if (mm >= 60) {
 		offset = getTimeMultiMod(mm);
 		mm = offset.modulo;
 		hh = hh + offset.multiplier;
@@ -343,8 +349,6 @@ function getFormattedTimeString(time_str, seconds) {
 
 
 function startTimer() {
-	time_el.innerHTML = '00:00:00'; // reset timer
-	penalty_el.innerHTML = '0'; // reset penalty
 	function timerIntervalCallback() {
 		time_el.innerHTML = getFormattedTimeString(time_el.innerHTML, 1);
 	}
@@ -362,8 +366,13 @@ function stopTimer() {
 
 function update(answer) {
 	answer = (typeof answer === 'undefined') ? null : answer;
+
 	if (answer !== null) { // next calc
 		current = current + 1;
+		// start the timer only when user has interacted with the game
+		if (timer_interval === null) {
+			startTimer();
+		}
 	}
 	if (answer === false) {
 		incrementPenalty();
@@ -389,27 +398,68 @@ function update(answer) {
 
 
 
-function finishGame() {
-	stopTimer();
-	current = 0; // reset current, so the user can start a new game :)
-	getEl('[data-game]').style.display = 'none';
-	getEl('[data-finish]').style.display = 'block';
-	getEl('[data-finish] [data-time]').innerHTML = getFormattedTimeString(
+function isExpertTime(time_string) {
+	var split = time_string.split(time_delimiter);
+	var hours = parseInt(split[0], 10);
+	var minutes = parseInt(split[1], 10);
+	var seconds = parseInt(split[2], 10);
+	var total = (hours*60*60) + (minutes*60) + seconds;
+	if (total <= expert_mode_max_seconds) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+
+function showResults() {
+	var hard_level = (level.name === 'hard' || level.name === 'expert') ? true : false,
+			time_formatted = null,
+			is_expert_time = null;
+	time_formatted = getFormattedTimeString(
 		time_el.innerHTML,
 		penalty_el.innerHTML
 	);
+	is_expert_time = isExpertTime(time_formatted);
+	if (hard_level && is_expert_time) {
+		getEl('[data-experts]').style.display = 'block';
+		getEl('[data-experts] [data-time]').innerHTML = time_formatted;
+	} else {
+		getEl('[data-finish]').style.display = 'block';
+		getEl('[data-finish] [data-time]').innerHTML = time_formatted;
+	}
+}
+
+
+
+function finishGame() {
+	stopTimer();
+	current = 0; // reset current, so the user can start a new game :)
+	var new_game_btn = getEl('[data-footer] button');
+	new_game_btn.setAttribute('data-text', new_game_btn.innerText);
+	new_game_btn.innerHTML = new_game_btn.getAttribute('data-repeat');
+	getEl('[data-game]').style.display = 'none';
+	showResults();
 }
 
 
 
 function startGame() {
+	time_el.innerHTML = '00:00:00'; // reset timer
+	penalty_el.innerHTML = '0'; // reset penalty
 	current = 0; // reset current calc index
+	var new_game_btn = getEl('[data-footer] button');
+	var new_game_btn_initial_text = new_game_btn.getAttribute('data-text');
+	if (new_game_btn_initial_text) {
+		new_game_btn.innerHTML = new_game_btn_initial_text;
+	}
 	getEl('[data-footer] [data-new]').style.display = 'block';
 	getEl('[data-game]').style.display = 'block';
 	getEl('[data-level]').style.display = 'none';
+	getEl('[data-experts]').style.display = 'none';
 	getEl('[data-footer] [data-level]').style.display = 'none';
 	math_map = getMathematicaMap();
-	startTimer();
 	update();
 }
 
@@ -426,6 +476,17 @@ function registerEventHandlersIntro() {
 		getEl('[data-footer] [data-new]').style.display = 'none';
 		getEl('[data-level]').style.display = 'block';
 		getEl('[data-footer] [data-level]').style.display = 'block';
+	};
+}
+
+
+
+function registerEventHandlersExpertFinish() {
+	getEl('[data-experts] button').onclick = function(evt) {
+		evt.preventDefault();
+		level_key = this.name;
+		level = levels[level_key];
+		startGame();
 	};
 }
 
@@ -497,6 +558,9 @@ function registerEventHandlers(where) {
 			case 'game':
 				registerEventHandlersGame();
 				break;
+			case 'experts':
+				registerEventHandlersExpertFinish();
+				break;
 			default:
 				break;
 		}
@@ -524,7 +588,7 @@ function init() {
 		container.innerHTML = html_template;
 		penalty_el = getEl('[data-game] [data-penalties]');
 		time_el = getEl('[data-game] [data-time]');
-		registerEventHandlers('intro,level,game');
+		registerEventHandlers('intro,level,game,experts');
 	}
 }
 
