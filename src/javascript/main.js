@@ -19,17 +19,42 @@ var timer_interval = null;
 
 var time_delimiter = ':';
 
-var levels = new Map([
-	['1', new Map([['amount', 20],['range_min', 1], ['range_max', 10]])],
-	['2', new Map([['amount', 50],['range_min', 1], ['range_max', 15]])],
-	['3', new Map([['amount', 100],['range_min', 1], ['range_max', 20]])],
-	['expertmode', new Map([['amount', 150],['range_min', 1], ['range_max', 30]])]
-]);
+var levels = {
+	'1': {
+		'amount': 20,
+		'range_min': 1,
+		'range_max': 10
+	},
+	'2': {
+		'amount': 50,
+		'range_min': 1,
+		'range_max': 15
+	},
+	'3': {
+		'amount': 100,
+		'range_min': 1,
+		'range_max': 20
+	},
+	'expertmode': {
+		'amount': 150,
+		'range_min': 1,
+		'range_max': 30
+	}
+};
 
-var keys = new Map([
-	['true', 'j'],
-	['false', 'f']
-]);
+var keys = {
+	'true': 'j',
+	'false': 'f'
+};
+
+
+
+// Fix for IE missing forEach in NodeLists
+if (('forEach' in NodeList.prototype) === false) {
+	NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
+
 
 /**
  * getEl - Shorthand for querySelectorAll and querySelector
@@ -64,7 +89,7 @@ function getScriptSelf() {
 /**
  * getScriptSelfUrlParamsMap - Returns key-value pairs of all Get-Parameters of the script's url
  *
- * @return {Map}  A Map of the Get-Parameters
+ * @return {Object}  A Map of the Get-Parameters
  */
 function getScriptSelfUrlParamsMap() {
 	var script_self = getScriptSelf(),
@@ -164,10 +189,10 @@ function getCalcResultFromString(str) {
 }
 
 function getMathematicaMap() {
-	var mathematica_map = new Map(),
-			amount = level.get('amount'),
-			range_min = level.get('range_min'),
-			range_max = level.get('range_max'),
+	var mathematica_map = {},
+			amount = level.amount,
+			range_min = level.range_min,
+			range_max = level.range_max,
 			cb = null,
 			i = 0;
 	cb = function(i) {
@@ -182,11 +207,11 @@ function getMathematicaMap() {
 		if (true_result !== offered_result) {
 			offered_result_is_true = false;
 		}
-		mathematica_map.set(i, new Map([
-			['calc', calc],
-			['result', offered_result],
-			['answer', offered_result_is_true]
-		]));
+		mathematica_map[i.toString()] = {
+			'calc': calc,
+			'result': offered_result,
+			'answer': offered_result_is_true
+		};
 	};
 	for (; i < amount; i++) {
 	  cb(i);
@@ -235,12 +260,12 @@ function getRowsMap() {
 			values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
 			empty_rows = empty_rows + 1;
 		} else {
-			var curr_map = math_map.get(i);
+			var curr_map = math_map[i];
 			if (curr_map === undefined) {
 				values.push(['&nbsp;', '&nbsp;', '&nbsp;']);
 				empty_rows = empty_rows + 1;
 			} else {
-				values.push([curr_map.get('calc'), '=', curr_map.get('result')]);
+				values.push([curr_map['calc'], '=', curr_map['result']]);
 			}
 			if (empty_rows === 2) {
 				continue_calc = false;
@@ -264,10 +289,10 @@ function getRowsMap() {
 			create('td', values[2][2])
 		])
 	];
-	return new Map([
-		['rows', rows],
-		['continue_calc', continue_calc]
-	]);
+	return {
+		'rows': rows,
+		'continue_calc': continue_calc
+	};
 }
 
 
@@ -348,8 +373,8 @@ function update(answer) {
 	var rows = null;
 	// reset
 	tbody.innerHTML = '';
-	if (rows_map.get('continue_calc') === true) {
-		rows = rows_map.get('rows');
+	if (rows_map['continue_calc'] === true) {
+		rows = rows_map['rows'];
 		var rowCallback = function(row) {
 			tbody.appendChild(row);
 		};
@@ -378,6 +403,7 @@ function finishGame() {
 
 
 function startGame() {
+	current = 0; // reset current calc index
 	getEl('[data-footer] [data-new]').style.display = 'block';
 	getEl('[data-game]').style.display = 'block';
 	getEl('[data-level]').style.display = 'none';
@@ -392,6 +418,7 @@ function startGame() {
 function registerEventHandlersIntro() {
 	getEl('button[name="start"]').onclick = function(evt){
 		evt.preventDefault();
+		stopTimer(); // reset timers
 		getEl('[data-intro]').style.display = 'none';
 		getEl('[data-game]').style.display = 'none';
 		getEl('[data-finish]').style.display = 'none';
@@ -411,7 +438,7 @@ function registerEventHandlersLevel() {
 		btn.onclick = function(evt){
 			evt.preventDefault();
 			level_key = this.name;
-			level = levels.get(level_key);
+			level = levels[level_key];
 			startGame();
 		};
 	};
@@ -422,9 +449,9 @@ function registerEventHandlersLevel() {
 
 function isUserInputTrue(b) {
 	if (b === 'true' || b === 'false') {
-		if (b === 'true' && math_map.get(current).get('answer') === true) {
+		if (b === 'true' && math_map[current]['answer'] === true) {
 			return true;
-		} else if (b === 'false' && math_map.get(current).get('answer') === false) {
+		} else if (b === 'false' && math_map[current]['answer'] === false) {
 			return true;
 		} else {
 			return false;
@@ -448,9 +475,9 @@ function registerEventHandlersGame() {
 	};
 	getEl('[data-game] button', true).forEach(buttonCallback);
 	window.addEventListener('keydown', function(evt) {
-		if (evt.key === keys.get('true')) {
+		if (evt.key === keys['true']) {
 			getEl('[data-game] button[name="true"]').click();
-		} else if (evt.key === keys.get('false')) {
+		} else if (evt.key === keys['false']) {
 			getEl('[data-game] button[name="false"]').click();
 		}
 	});
@@ -488,11 +515,11 @@ function init() {
 	var script_self_url_params_map = getScriptSelfUrlParamsMap(),
 			script_self_url_map = null,
 			snippet_basepath = null,
-			render_to_id = script_self_url_params_map.get('renderTo');
+			render_to_id = script_self_url_params_map['renderTo'];
 	container = document.getElementById(render_to_id);
 	if (container) {
 		script_self_url_map = getScriptSelfUrlMap();
-		snippet_basepath = script_self_url_map.get('basepath');
+		snippet_basepath = script_self_url_map['basepath'];
 		loadCss(snippet_basepath + 'style.css');
 		container.innerHTML = html_template;
 		penalty_el = getEl('[data-game] [data-penalties]');
