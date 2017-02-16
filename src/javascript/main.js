@@ -74,6 +74,14 @@ function getScriptSelfUrlParamsMap() {
 
 
 
+function getScriptSelfUrlMap() {
+	var script_self = getScriptSelf(),
+			url_map = new UrlMap(script_self.src);
+	return url_map;
+}
+
+
+
 function log(obj) {
 	window.console.log(obj);
 }
@@ -478,10 +486,14 @@ function registerEventHandlers(where) {
  */
 function init() {
 	var script_self_url_params_map = getScriptSelfUrlParamsMap(),
+			script_self_url_map = null,
+			snippet_basepath = null,
 			render_to_id = script_self_url_params_map.get('renderTo');
 	container = document.getElementById(render_to_id);
 	if (container) {
-		loadCss('style.css');
+		script_self_url_map = getScriptSelfUrlMap();
+		snippet_basepath = script_self_url_map.get('basepath');
+		loadCss(snippet_basepath + 'style.css');
 		container.innerHTML = html_template;
 		penalty_el = getEl('[data-game] [data-penalties]');
 		time_el = getEl('[data-game] [data-time]');
