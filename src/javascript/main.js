@@ -599,8 +599,15 @@ function getGlobalCallbackFunctionFromString(str) {
 			tmp = window[el];
 		}
 	};
-	split.forEach(cb)
-	return tmp;
+	try {
+		split.forEach(cb)
+	} catch (e) {
+		tmp = function(){
+			console.error('Callback function "'+str+'" does not exist!');
+		};
+	} finally {
+		return tmp;
+	}
 }
 
 
@@ -611,26 +618,26 @@ function getGlobalCallbackFunctionFromString(str) {
  */
 function init() {
 	var script_self_url_params_map = getScriptSelfUrlParamsMap(),
-			script_self_url_map = null,
-			snippet_basepath = null,
+			script_self_url_map = getScriptSelfUrlMap(),
+			snippet_basepath = script_self_url_map['basepath'],
 			render_to_id = script_self_url_params_map['renderTo'],
 			cb = script_self_url_params_map['callback'];
-	if (cb) {
-		var global_click_callback_function = getGlobalCallbackFunctionFromString(cb);
-		global_click_callback = function() {
-			global_click_callback_function();
-		};
-	}
-	container = document.getElementById(render_to_id);
-	if (container) {
-		script_self_url_map = getScriptSelfUrlMap();
-		snippet_basepath = script_self_url_map['basepath'];
-		loadCss(snippet_basepath + 'style.css');
-		container.innerHTML = html_template;
-		penalty_el = getEl('[data-game] [data-penalties]');
-		time_el = getEl('[data-game] [data-time]');
-		registerEventHandlers('intro,level,game,experts');
-	}
+	onDomReady(function(){
+		if (cb) {
+			var global_click_callback_function = getGlobalCallbackFunctionFromString(cb);
+			global_click_callback = function() {
+				global_click_callback_function();
+			};
+		}
+		container = document.getElementById(render_to_id);
+		if (container) {
+			loadCss(snippet_basepath + 'style.css');
+			container.innerHTML = html_template;
+			penalty_el = getEl('[data-game] [data-penalties]');
+			time_el = getEl('[data-game] [data-time]');
+			registerEventHandlers('intro,level,game,experts');
+		}
+	});
 }
 
 init();
