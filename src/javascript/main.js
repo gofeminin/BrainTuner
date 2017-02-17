@@ -11,6 +11,8 @@ var math_map  = null;
 
 var penalty_value = 5;
 
+var incorrect_answers_counter = 0;
+
 var penalty_el = null;
 
 var time_el = null;
@@ -416,7 +418,8 @@ function isExpertTime(time_string) {
 function showResults() {
 	var hard_level = (level.name === 'hard' || level.name === 'expert') ? true : false,
 			time_formatted = null,
-			is_expert_time = null;
+			is_expert_time = null,
+			correct_answers_counter = level.amount - incorrect_answers_counter;
 	time_formatted = getFormattedTimeString(
 		time_el.innerHTML,
 		penalty_el.innerHTML
@@ -426,8 +429,14 @@ function showResults() {
 		getEl('[data-experts]').style.display = 'block';
 		getEl('[data-experts] [data-time]').innerHTML = time_formatted;
 	} else {
+		var correct_el = getEl('[data-finish] [data-correct]');
+		var incorrect_el = getEl('[data-finish] [data-incorrect]');
+		var total_el = getEl('[data-finish] [data-total]');
 		getEl('[data-finish]').style.display = 'block';
 		getEl('[data-finish] [data-time]').innerHTML = time_formatted;
+		if (total_el) total_el.innerHTML = level.amount;
+		if (correct_el) correct_el.innerHTML = correct_answers_counter;
+		if (incorrect_el) incorrect_el.innerHTML = incorrect_answers_counter;
 	}
 }
 
@@ -448,6 +457,7 @@ function finishGame() {
 function startGame() {
 	time_el.innerHTML = '00:00:00'; // reset timer
 	penalty_el.innerHTML = '0'; // reset penalty
+	incorrect_answers_counter = 0;
 	current = 0; // reset current calc index
 	var new_game_btn = getEl('[data-footer] button');
 	var new_game_btn_initial_text = new_game_btn.getAttribute('data-text');
@@ -515,6 +525,7 @@ function isUserInputTrue(b) {
 		} else if (b === 'false' && math_map[current]['answer'] === false) {
 			return true;
 		} else {
+			incorrect_answers_counter = incorrect_answers_counter + 1;
 			return false;
 		}
 	} else {
