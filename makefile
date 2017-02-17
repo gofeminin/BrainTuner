@@ -5,7 +5,7 @@ all: info \
 	minified-javascript\
 	html\
 	images\
-	css
+	sass
 info:
 	bash makefile_scripts/print-info.bash
 distribution-directories:
@@ -22,3 +22,5 @@ images:
 	bash makefile_scripts/copy-images-to-dist.bash $portal
 css:
 	bash makefile_scripts/copy-css-to-dist.bash $portal
+sass:
+	bash makefile_scripts/generate-css-from-sass.bash $portal
