@@ -626,7 +626,11 @@ function init() {
 		if (cb) {
 			var global_click_callback_function = getGlobalCallbackFunctionFromString(cb);
 			global_click_callback = function() {
-				global_click_callback_function();
+				try {
+					global_click_callback_function();
+				} catch (e) {
+					console.error(cb + ' threw an error ' + e.toString());
+				}
 			};
 		}
 		container = document.getElementById(render_to_id);
