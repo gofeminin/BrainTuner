@@ -23,6 +23,8 @@ var time_delimiter = ':';
 
 var expert_mode_max_seconds = 180;
 
+var global_click_callback = function(){};
+
 var levels = {
 	'1': {
 		'name': 'easy',
@@ -443,6 +445,7 @@ function showResults() {
 
 
 function finishGame() {
+	global_click_callback();
 	stopTimer();
 	current = 0; // reset current, so the user can start a new game :)
 	var new_game_btn = getEl('[data-footer] button');
@@ -455,6 +458,7 @@ function finishGame() {
 
 
 function startGame() {
+	global_click_callback()
 	time_el.innerHTML = '00:00:00'; // reset timer
 	penalty_el.innerHTML = '0'; // reset penalty
 	incorrect_answers_counter = 0;
@@ -478,6 +482,7 @@ function startGame() {
 function registerEventHandlersIntro() {
 	getEl('button[name="start"]').onclick = function(evt){
 		evt.preventDefault();
+		global_click_callback();
 		stopTimer(); // reset timers
 		getEl('[data-intro]').style.display = 'none';
 		getEl('[data-game]').style.display = 'none';
@@ -496,6 +501,7 @@ function registerEventHandlersExpertFinish() {
 		evt.preventDefault();
 		level_key = this.name;
 		level = levels[level_key];
+		global_click_callback();
 		startGame();
 	};
 }
@@ -539,6 +545,7 @@ function registerEventHandlersGame() {
 	var buttonCallback = function(btn) {
 		btn.onclick = function(evt) {
 			evt.preventDefault();
+			global_click_callback();
 			if (getEl('[data-game]').style.display !== 'block') return; // safe exit
 			var btn_name = this.name;
 			var user_input = isUserInputTrue(btn_name);
@@ -582,6 +589,22 @@ function registerEventHandlers(where) {
 
 
 
+function getGlobalCallbackFunctionFromString(str) {
+	var split = str.split('.'),
+			tmp = null;
+	var cb = function(el) {
+		if (tmp !== null) {
+			tmp = tmp[el];
+		} else {
+			tmp = window[el];
+		}
+	};
+	split.forEach(cb)
+	return tmp;
+}
+
+
+
 /**
  * init - Main function setting everything up
  *
@@ -590,7 +613,14 @@ function init() {
 	var script_self_url_params_map = getScriptSelfUrlParamsMap(),
 			script_self_url_map = null,
 			snippet_basepath = null,
-			render_to_id = script_self_url_params_map['renderTo'];
+			render_to_id = script_self_url_params_map['renderTo'],
+			cb = script_self_url_params_map['callback'];
+	if (cb) {
+		var global_click_callback_function = getGlobalCallbackFunctionFromString(cb);
+		global_click_callback = function() {
+			global_click_callback_function();
+		};
+	}
 	container = document.getElementById(render_to_id);
 	if (container) {
 		script_self_url_map = getScriptSelfUrlMap();
