@@ -19,6 +19,15 @@
 <body>
 
 <div id="gehirntrainer_app"></div>
-<script src="app.snippet.js?renderTo=gehirntrainer_app"></script>
+<script>
+	window.onmeda = {
+			callback: {
+				games_braintuner: function() {
+					console.log('Callback dummy');
+				}
+			}
+	};
+</script>
+<script src="app.snippet.js?renderTo=gehirntrainer_app&amp;callback=onmeda.callback.games_braintuner"></script>
 </body>
 </html>
