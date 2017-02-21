@@ -26,5 +26,5 @@ css:
 	bash makefile_scripts/copy-css-to-dist.bash $portal
 sass:
 	bash makefile_scripts/generate-css-from-sass.bash $portal
-deploy:
+deployment:
 	bash makefile_scripts/deploy.bash $portal
