@@ -17,7 +17,7 @@
   "level_11": "Difícil ",
   "game_1": "Tiempo:",
   "game_2": "Segundos de penalización:",
-  "game_3": "Falso/ incorrecto (F)",
+  "game_3": "Falso (F)",
   "game_4": "Correcto (J)",
   "game_5": "Nuevo juego",
   "game_6": "¡Has resuelto todos los problemas!",
