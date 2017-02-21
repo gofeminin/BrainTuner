@@ -619,9 +619,10 @@ function getGlobalCallbackFunctionFromString(str) {
 function init() {
 	var script_self_url_params_map = getScriptSelfUrlParamsMap(),
 			script_self_url_map = getScriptSelfUrlMap(),
-			snippet_basepath = script_self_url_map['basepath'],
-			render_to_id = script_self_url_params_map['renderTo'],
-			cb = script_self_url_params_map['callback'];
+			ytt = new YTT(html_template, translation),
+			snippet_basepath = script_self_url_map.basepath,
+			render_to_id = script_self_url_params_map.renderTo,
+			cb = script_self_url_params_map.callback;
 	onDomReady(function(){
 		if (cb) {
 			var global_click_callback_function = getGlobalCallbackFunctionFromString(cb);
@@ -636,6 +637,9 @@ function init() {
 		container = document.getElementById(render_to_id);
 		if (container) {
 			loadCss(snippet_basepath + 'style.css');
+			html_template = ytt.getMappedString()
+				.replace('[[correctcount]]', '<span data-correct>0</span>')
+				.replace('[[totalcount]]', '<span data-total>0</span>');
 			container.innerHTML = html_template;
 			penalty_el = getEl('[data-game] [data-penalties]');
 			time_el = getEl('[data-game] [data-time]');

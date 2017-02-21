@@ -10,6 +10,8 @@ info:
 	bash makefile_scripts/print-info.bash
 distribution-directories:
 	bash makefile_scripts/prepare-dist.bash $portal
+translation:
+	bash makefile_scripts/download_and_generate_translation.bash $portal
 javascript-variables-from-html:
 	bash makefile_scripts/generate-js-vars-from-html.bash $portal
 javascript:

@@ -1,0 +1,186 @@
+$blue-color: #0095c8
+$background-color: #0095c8
+
+[data-gehirntrainer]
+	*
+		margin: 0
+		padding: 0
+		border: 0
+		font:
+			weight: normal
+			style: normal
+			size: 100%
+			family: inherit
+		line-height: 1
+		text-align: left
+		background: none
+	margin: 50px auto
+	width: 100%
+	max-width: 610px
+	font-family: 'Source Sans Pro'
+	ul, ol, li
+		list-style: none
+	strong
+		font-weight: bold
+	button
+		border-radius: 5px
+		font:
+			weight: bold
+			size: 23px
+		text-align: center
+	.highlight
+		color: $blue-color
+		font-weight: bold
+	[data-main]
+		background: #fff
+		padding: 48px
+		font-size: 20px
+		min-height: 499px
+		> div
+			overflow: hidden
+		button
+			background: #fff
+			padding: 10px 11px 12px 11px
+			color: #fff
+		.blue
+			color: $blue-color
+		p
+			margin-bottom: 30px
+			line-height: 1.25
+			&:last-child
+				margin-bottom: 0
+		[data-level]
+			ul
+				margin: 75px 0 0 30px
+				li
+					margin-top: 30px
+		[data-game]
+			div.top
+				margin-top: 25px
+				p
+					text-align: center
+					margin-bottom: 40px
+					&:first-child
+						font-size: 29px
+						margin-bottom: 10px
+			table
+				background: #ecf7fb
+				width: 100%
+				color: #0095c8
+				font-size: 35px
+				tr
+					&:first-child
+						td:last-child
+							background:
+								image: url(images/icons.png)
+								repeat: no-repeat
+								position: -300px -300px
+					&.true:first-child
+						td:last-child
+							background-position: top -42px right 9px
+					&.false:first-child
+						td:last-child
+							background-position: top 13px right 9px
+					&:nth-child(2)
+						background: #cceaf4
+						color: #4a4a4a
+					td
+						padding: 10px
+						&:first-child
+							width: 180px
+							text-align: right
+							padding-right: 40px
+						&:nth-child(2)
+							width: 43px
+						&:last-child
+							width: "*"
+			div.buttons
+				width: 405px
+				margin: 30px auto 0 auto
+				button
+					width: 165px
+					&:first-child
+						background: #b80000
+						float: left
+					&:last-child
+						background: #7db82a
+						float: right
+		[data-finish]
+			[data-time]
+				margin: 100px auto 120px auto
+				text-align: center
+				font-size: 40px
+			.subtime-text
+				text-align: center
+				margin-top: -80px
+				margin-bottom: 80px
+		[data-experts]
+			[data-time]
+				text-align: center
+				font-size: 40px
+			button
+				display: block
+				background: #7db82a
+				margin: 0 auto 35px auto
+				width: 250px
+	[data-footer]
+		background: #0095c8
+		padding: 19px
+		> div
+			overflow: hidden
+			> div
+				margin: 0 auto
+				max-width: 480px
+				overflow: hidden
+		button
+			display: inline
+			background: #fff
+			padding: 14px 15px 16px 15px
+			color: #0095c8
+		> [data-new]
+			button
+				width: 250px
+				margin: 0 auto
+				display: block
+		[data-level]
+			button
+				width: 150px
+				float: left
+				margin-left: 15px
+				&:first-child
+					margin: 0
+@media (max-width: 600px)
+	[data-gehirntrainer]
+		[data-main]
+			padding: 10px
+			min-height: auto
+			[data-intro]
+				p
+					&:last-child
+						margin-bottom: 20px
+			[data-level]
+				ul
+					margin-bottom: 20px
+			[data-game]
+				div
+					&.buttons
+						width: auto
+						padding-bottom: 30px
+						button, button:first-child
+							width: auto
+							float: none
+				table
+					tr
+						td
+							&:first-child
+								width: 150px
+			[data-finish],
+			[data-expert]
+				[data-time]
+					margin-top: 50px
+		[data-footer]
+			[data-level]
+				button, button:first-child
+					float: none
+					display: block
+					margin: 0 auto 10px auto
