@@ -9,6 +9,7 @@ cat tmp/var_html_template.js >> dist/$portal/app.snippet.js
 echo -n "var translation = " >> dist/$portal/app.snippet.js
 cat src/json/translation/$portal.js >> dist/$portal/app.snippet.js
 echo ";" >> dist/$portal/app.snippet.js
+cat src/javascript/keys/$portal.js >> dist/$portal/app.snippet.js
 cat src/javascript/YTT.js\
 	src/javascript/UrlMap.js\
 	src/javascript/UrlParamsMap.js\

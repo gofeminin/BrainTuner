@@ -18,7 +18,7 @@
   "game_1": "Temps :",
   "game_2": "Pénalité :",
   "game_3": "Faux (F)",
-  "game_4": "Vrai (V°",
+  "game_4": "Vrai (V)",
   "game_5": "Nouveau jeu",
   "game_6": "Vous avez répondu correctement à toutes les questions !",
   "game_7": "Votre score :",

@@ -52,11 +52,6 @@ var levels = {
 	}
 };
 
-var keys = {
-	'true': 'j',
-	'false': 'f'
-};
-
 
 
 // Fix for IE missing forEach in NodeLists

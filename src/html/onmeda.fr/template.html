@@ -1,25 +1,25 @@
 <div data-gehirntrainer>
 	<div data-main>
 		<div data-intro style="display: block;">
-			<p class="highlight">Trainieren Sie Ihr logisches Denkvermögen und Ihre Rechenfähigkeit!</p>
-			<p>Der Gehirntrainer zeigt Ihnen verschiedene Rechenaufgaben. Ziel des Spiels ist es, so schnell wie möglich zu entscheiden, ob diese richtig oder falsch gelöst sind.</p>
-			<p>Klicken Sie dazu auf den entsprechenden Button oder die Tasten “F” (falsch) oder “J” (richtig).</p>
-			<p>Für jede falsche Antwort erhalten Sie fünf Strafsekunden. Das Spiel ist beendet, sobald Sie alle Rechenaufgaben bewertet haben.</p>
-			<p class="blue"><strong>Viel Erfolg!</strong></p>
+			<p class="highlight">{{intro_1}}</p>
+			<p>{{intro_2}}</p>
+			<p>{{intro_3}}</p>
+			<p>{{intro_4}}</p>
+			<p class="blue"><strong>{{intro_5}}</strong></p>
 		</div>
 		<div data-level style="display: none;">
-			<p class="highlight">Wählen Sie den Schwierigkeitsgrad!</p>
-			<p>Sie können den Gehirntrainer in 3 Schwierigkeitsgraden spielen:</p>
+			<p class="highlight">{{level_1}}</p>
+			<p>{{level_2}}</p>
 			<ul>
-				<li><span class="blue">Leicht:</span> 20 Aufgaben</li>
-				<li><span class="blue">Mittel:</span> 50 Aufgaben</li>
-				<li><span class="blue">Schwer:</span> 100 Aufgaben</li>
+				<li><span class="blue">{{level_3}}</span> {{level_4}}</li>
+				<li><span class="blue">{{level_5}}</span> {{level_6}}</li>
+				<li><span class="blue">{{level_7}}</span> {{level_8}}</li>
 			</ul>
 		</div>
 		<div data-game style="display: none;">
 			<div class="top">
-				<p>Zeit: <span data-time>00:00:00</span></p>
-				<p class="blue">Strafsekunden: <span data-penalties>0</span></p>
+				<p>{{game_1}} <span data-time>00:00:00</span></p>
+				<p class="blue">{{game_2}} <span data-penalties>0</span></p>
 			</div>
 			<table>
 				<tr class="false">
@@ -39,37 +39,37 @@
 				</tr>
 			</table>
 			<div class="buttons">
-				<button name="false">Falsch (F)</button>
-				<button name="true">Richtig (J)</button>
+				<button name="false">{{game_3}}</button>
+				<button name="true">{{game_4}}</button>
 			</div>
 		</div>
 		<div data-finish style="display: none;">
-			<p class="highlight">Sie haben alle Aufgaben gelöst!</p>
-			<p>Ihr Ergebnis:</p>
+			<p class="highlight">{{game_6}}</p>
+			<p>{{game_7}}</p>
 			<div data-time class="blue">00:00:00</div>
-			<p class="subtime-text blue">Sie haben <span data-correct>0</span> von <span data-total>0</span> Fragen richtig beantwortet.</p>
-			<p>Neues Spiel beginnen:</p>
+			<p class="subtime-text blue">{{game_8}}</p>
+			<p>{{game_9}}</p>
 		</div>
 		<div data-experts style="display: none;">
-			<p>Ihr Ergebnis:</p>
+			<p>{{game_7}}</p>
 			<p data-time class="blue">00:00:00</p>
-			<p>Sie haben alle Aufgaben der höchsten Schwierigkeitsstufe in Rekordzeit gelöst.<br/>Damit haben Sie den <strong>Experten-Modus</strong> freigeschaltet!</p>
-			<p>Lösen Sie jetzt 150 Aufgaben mit Zahlen zwischen 1 - 30:</p>
-			<button name="expertmode">Expertenmodus</button>
-			<p>Oder spielen Sie erneut in einem anderen Schwierigkeitsgrad:</p>
+			<p>{{expert_1}}</p>
+			<p>{{expert_2}}</p>
+			<button name="expertmode">{{expert_3}}</button>
+			<p>{{expert_4}}</p>
 		</div>
 	</div>
 	<div data-footer>
 		<div data-new style="display: block;">
 			<div>
-				<button name="start" data-repeat="Noch mal spielen?">Neues Spiel</button>
+				<button name="start" data-repeat="{{game_10}}">{{game_5}}</button>
 			</div>
 		</div>
 		<div data-level style="display: none;">
 			<div>
-				<button name="1">Leicht</button>
-				<button name="2">Mittel</button>
-				<button name="3">Schwer</button>
+				<button name="1">{{level_9}}</button>
+				<button name="2">{{level_10}}</button>
+				<button name="3">{{level_11}}</button>
 			</div>
 		</div>
 	</div>
