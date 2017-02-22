@@ -14,8 +14,8 @@ case "$portal" in
 	"onmeda.es")
 		PARTIAL_DEPLOY_PATH="braintuner-onmeda-es"
 		;;
-	"onmeda.es")
-		PARTIAL_DEPLOY_PATH="braintuner-onmeda-es"
+	"onmeda.fr")
+		PARTIAL_DEPLOY_PATH="braintuner-onmeda-fr"
 		;;
 	*)
 		echo Nothing to do
