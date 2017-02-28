@@ -3,7 +3,7 @@
   "intro_2": "Nuestro juego te mostrará una serie de cálculos matemáticos. Tu objetivo es decidir lo más rápido posible si los cálculos son verdaderos o falsos.",
   "intro_3": "Haz clic en los botones o pulsa las teclas \"F\" (falso/incorrecto) o \"J\" (correcto) en tu teclado.",
   "intro_4": "<br/>Serás penalizado con 5 segundos menos por cada respuesta incorrecta. El juego terminará una vez que hayas resuelto todos los problemas.",
-  "intro_5": "¡Bien hecho!",
+  "intro_5": "¡Buena suerte!",
   "level_1": "¡Escoge tu nivel de dificultad!",
   "level_2": "Te proponemos 3 niveles de dificultad:",
   "level_3": "Fácil:",
