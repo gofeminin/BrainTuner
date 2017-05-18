@@ -26,6 +26,6 @@ the deployment script.
 - [Node.js](https://nodejs.org/)
 - [NPM](https://www.npmjs.com/)
 - [Minify](https://www.npmjs.com/package/node-minify)
-- [YTT](https://apps.ysragh.com/ytt/)
+- [YTT](https://apps.emkae.net/ytt/)
 - [tty-countdown](https://github.com/veggiedefender/tty-countdown)
-- [akamaibot/akamaicli](https://apps.ysragh.com/akamaicli/)
+- [akamaibot/akamaicli](https://apps.emkae.net/akamaicli/)
