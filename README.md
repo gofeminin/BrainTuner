@@ -1,4 +1,4 @@
-Gehirntrainer (HTML5-Version)
+BrainTuner (HTML5-Version)
 =============================
 
 This is the HTML5-Version of the Braintuner which was programmed in Adobe Flash.
